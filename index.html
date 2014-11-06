@@ -1,84 +1,39 @@
 <html>
 <head>
-
 	<title>Test Document </title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="my.css">
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('form').submit(function(event) {
+		var text = $('#NewToDo').val();
+		var NewToDo = $('<label>');
+		NewToDo.append(text);
+		NewToDo.append('</label><hr>');
+		$('#TableOfToDo').append(NewToDo);
+		event.preventDefault();
+		});
+	});
+	</script>
 </head>
 <body>
-<link rel="stylesheet" href="./pure.css">
-<center><H1>TODO list</H1></center>
-
-<div class="pure-g">
-	<div class="pure-u-1-4"><p></p></div>
-    <div class="pure-u-1-6">
-		<form class="pure-form">
-			<input type="text" class="pure-input-rounded" placeholder="What TODO?">
-		</form>
+<div class="myDiv">
+	<div class="pretty_header">
+	TodoList
 	</div>
-	
-    <div class="pure-u-1-6">
-		<form class="pure-form">
-			<input type="text" class="pure-input-rounded" placeholder="When TODO?">
-		</form>
-	</div>
-	
-	<div class="pure-u-1-6">
-	<form class="pure-form">
-		<button type="submit" class="pure-button">Submit TODO</button>
+	<form role="form">
+		<input type="text" class="form-control" id="NewToDo" placeholder="What needs to be done?" required action=none>
+		<label>
+			<input type="checkbox"> Mark all as complete
+		</label>
+		<hr>
+		<div id='TableOfToDo'>
+		</div>
 	</form>
-	</div>
-	
-	<div class="pure-u-1-4"><p></p></div>
-</div>
 
-<div class="pure-g">
-	<div class="pure-u-1-6"></div>
-	<div class="pure-u-1-12">
-	<div class="not-done-work">
-		<label for="delete1">
-            <input id="delete1" type="checkbox">
-        </label>
-	</div>
-	</div>
-    <div class="pure-u-1-6">
-		<div class="done-work">
-			First TODO
-		</div>
-	</div>
-	
-	
-    <div class="pure-u-1-6">
-		<div class="done-work">
-			10.12.13
-		</div>
-	</div>
-	
-	<div class="pure-u-1-6"></div>
-	<div class="pure-u-1-4"><p></p></div>
-</div>
 
-<div class="pure-g">
-	<div class="pure-u-1-6"></div>
-	<div class="pure-u-1-12">
-	<div class="not-done-work">
-		<label for="delete2">
-            <input id="delete2" type="checkbox">
-        </label>
-	</div>
-	</div>
-    <div class="pure-u-1-6">
-	<div class="not-done-work">
-		Second TODO
-	</div>
-	</div>
-	
-    <div class="pure-u-1-6" class="done-work">
-	<div class="not-done-work">
-		3.2.13
-	</div>
-	</div>
-	
-	<div class="pure-u-1-6"></div>
-	<div class="pure-u-1-4"><p></p></div>
-</div>	
+</div>
 </body>
 </html>
