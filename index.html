@@ -26,9 +26,24 @@
 		if (void 0 === $("#AllComp").attr("checked")) {
 			$('.ToDo').addClass('doneToDo');
 			$("#AllComp").attr("checked", "checked");
+			$("input[id*=check-]").attr("checked", "checked");
+			$("input[id*=check-]").prop("checked", true);
 		} else {
 			$('.ToDo').removeClass('doneToDo');
 			$("#AllComp").removeAttr("checked");
+			$("input[id*=check-]").prop("checked", false);
+		}
+		});
+		
+		$(document).on('change', 'input[id*=check-]', function() {
+		var cur_div = '#ToDo' + $(this).attr("id").slice(5);
+		if (void 0 === $(this).attr("checked")) {
+			$(cur_div).addClass('doneToDo');
+			$(this).attr("checked", "checked");
+		} else {
+			$(cur_div).removeClass('doneToDo');
+			$(this).removeAttr("checked");
+			$('#AllComp').removeAttr("checked");
 		}
 		});
 			
