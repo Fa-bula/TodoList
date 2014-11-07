@@ -7,14 +7,31 @@
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
+		var i = 0;
+		
 		$('form').submit(function(event) {
+		$('#AllComp').removeAttr("checked");
 		var text = $('#NewToDo').val();
-		var NewToDo = $('<label>');
+		$('#NewToDo').val('');
+		var NewToDo = $('<div class="ToDo" id = ToDo-' + i + '>');
+		NewToDo.append('<input type="checkbox" id = check-' + i + '>');
+		i++;
 		NewToDo.append(text);
-		NewToDo.append('</label><hr>');
+		NewToDo.append('<hr>');
 		$('#TableOfToDo').append(NewToDo);
 		event.preventDefault();
 		});
+		
+		$('#AllComp').change(function() {
+		if (void 0 === $("#AllComp").attr("checked")) {
+			$('.ToDo').addClass('doneToDo');
+			$("#AllComp").attr("checked", "checked");
+		} else {
+			$('.ToDo').removeClass('doneToDo');
+			$("#AllComp").removeAttr("checked");
+		}
+		});
+			
 	});
 	</script>
 </head>
@@ -24,11 +41,11 @@
 	TodoList
 	</div>
 	<form role="form">
-		<input type="text" class="form-control" id="NewToDo" placeholder="What needs to be done?" required action=none>
-		<label>
-			<input type="checkbox"> Mark all as complete
-		</label>
+		<input type="text" class="form-control" class="myDiv" id="NewToDo" placeholder="What needs to be done?" required action=none>
 		<hr>
+		<label>
+			<input type="checkbox" id = "AllComp" autocomplete="off"> Mark all as complete
+		</label>
 		<div id='TableOfToDo'>
 		</div>
 	</form>
