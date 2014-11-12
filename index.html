@@ -8,34 +8,36 @@
 	<script type="text/javascript">
 	$(document).ready(function() {
 		var i = 0;
+		$('#NewToDo').focus();
 		
 		$('form').submit(function(event) {
 		$('#AllComp').removeAttr("checked");
 		var text = $('#NewToDo').val();
 		$('#NewToDo').val('');
-		var NewToDo = $('<div class="ToDo" id = ToDo-' + i + '>');
+		var NewToDo = $('<div class="ToDo">');
 		NewToDo.append('<input type="checkbox" id = check-' + i + '>');
+		NewToDo.append('<span  id = ToDo-' + i + '>' + text);
 		i++;
-		NewToDo.append(text);
 		NewToDo.append('<hr>');
 		$('#TableOfToDo').append(NewToDo);
 		event.preventDefault();
 		});
 		
-		$('#AllComp').change(function() {
+		$('#AllComp').change(function(event) {
 		if (void 0 === $("#AllComp").attr("checked")) {
-			$('.ToDo').addClass('doneToDo');
+			$('span[id*=ToDo-]').addClass('doneToDo');
 			$("#AllComp").attr("checked", "checked");
 			$("input[id*=check-]").attr("checked", "checked");
 			$("input[id*=check-]").prop("checked", true);
 		} else {
-			$('.ToDo').removeClass('doneToDo');
+			$('span[id*=ToDo-]').removeClass('doneToDo');
 			$("#AllComp").removeAttr("checked");
 			$("input[id*=check-]").prop("checked", false);
+			$("input[id*=check-]").removeAttr("checked");
 		}
 		});
 		
-		$(document).on('change', 'input[id*=check-]', function() {
+		$(document).on('change', 'input[id*=check-]', function(event) {
 		var cur_div = '#ToDo' + $(this).attr("id").slice(5);
 		if (void 0 === $(this).attr("checked")) {
 			$(cur_div).addClass('doneToDo');
@@ -45,6 +47,28 @@
 			$(this).removeAttr("checked");
 			$('#AllComp').removeAttr("checked");
 		}
+		});
+		
+		$(document).on('dblclick', 'span[id*=ToDo-]', function(event) {
+		$(this).attr('contenteditable', 'true');
+		$(this).prop('contenteditable', 'true');
+		$(this).focus();
+		//$(this).val('ed');
+		});
+		
+		$(document).on('keydown', 'span[id*=ToDo-]', function(event) {
+		if ( event.which == 13 ) {
+			event.preventDefault();
+		}
+		});
+		
+		$(document).on('mousedown', 'span[id*=ToDo-]', function(event) {
+		event.preventDefault();
+		});
+		
+		$(document).on('focusout', 'span[id*=ToDo-]', function(event) {
+		$(this).attr('contenteditable', 'false');
+		$(this).prop('contenteditable', 'false');
 		});
 			
 	});
