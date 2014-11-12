@@ -9,7 +9,7 @@
 	$(document).ready(function() {
 		var i = 0;
 		$('#NewToDo').focus();
-		
+		$('#TableOfToDo').append(localStorage.getItem('TableOfToDo'));
 		$('form').submit(function(event) {
 		$('#AllComp').removeAttr("checked");
 		var text = $('#NewToDo').val();
@@ -17,10 +17,17 @@
 		var NewToDo = $('<div class="ToDo">');
 		NewToDo.append('<input type="checkbox" id = check-' + i + '>');
 		NewToDo.append('<span  id = ToDo-' + i + '>' + text);
-		i++;
+		NewToDo.append('<button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>');
 		NewToDo.append('<hr>');
+		i++;
 		$('#TableOfToDo').append(NewToDo);
+		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
 		event.preventDefault();
+		});
+		
+		$(document).on('mousedown', 'button[class="close"]', function(event) {
+		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
+		$(this).parent().remove();
 		});
 		
 		$('#AllComp').change(function(event) {
