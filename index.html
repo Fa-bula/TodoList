@@ -10,6 +10,9 @@
 		var i = 0;
 		$('#NewToDo').focus();
 		$('#TableOfToDo').append(localStorage.getItem('TableOfToDo'));
+		if (JSON.parse(localStorage.getItem('maxI')) != null)
+			i = JSON.parse(localStorage.getItem('maxI'));
+		
 		$('form').submit(function(event) {
 		$('#AllComp').removeAttr("checked");
 		var text = $('#NewToDo').val();
@@ -22,12 +25,14 @@
 		i++;
 		$('#TableOfToDo').append(NewToDo);
 		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
+		localStorage.setItem('maxI', JSON.stringify(i));
 		event.preventDefault();
 		});
 		
 		$(document).on('mousedown', 'button[class="close"]', function(event) {
 		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
 		$(this).parent().remove();
+		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
 		});
 		
 		$('#AllComp').change(function(event) {
@@ -42,6 +47,7 @@
 			$("input[id*=check-]").prop("checked", false);
 			$("input[id*=check-]").removeAttr("checked");
 		}
+		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
 		});
 		
 		$(document).on('change', 'input[id*=check-]', function(event) {
@@ -54,18 +60,19 @@
 			$(this).removeAttr("checked");
 			$('#AllComp').removeAttr("checked");
 		}
+		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
 		});
 		
 		$(document).on('dblclick', 'span[id*=ToDo-]', function(event) {
 		$(this).attr('contenteditable', 'true');
 		$(this).prop('contenteditable', 'true');
 		$(this).focus();
-		//$(this).val('ed');
 		});
 		
 		$(document).on('keydown', 'span[id*=ToDo-]', function(event) {
 		if ( event.which == 13 ) {
 			event.preventDefault();
+			$('#NewToDo').focus();
 		}
 		});
 		
@@ -76,6 +83,15 @@
 		$(document).on('focusout', 'span[id*=ToDo-]', function(event) {
 		$(this).attr('contenteditable', 'false');
 		$(this).prop('contenteditable', 'false');
+		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
+		});
+		
+		$('#done').click( function(event) {
+		$('.doneToDo').parent().remove();
+		$('#AllComp').prop('checked', 'false');
+		$('#AllComp').removeAttr('checked');
+		$('#NewToDo').focus();
+		localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
 		});
 			
 	});
@@ -95,8 +111,10 @@
 		<div id='TableOfToDo'>
 		</div>
 	</form>
+</div>
 
-
+<div class="panel-footer">
+	<button class="btn btn-default btn-xs" id="done">Delete done</button>
 </div>
 </body>
 </html>
