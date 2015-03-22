@@ -1,0 +1,21 @@
+{
+  "name": "TodoList",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Fa-bula/TodoList",
+  "authors": [
+    "Fa-bula <fa_bula@mail.ru>"
+  ],
+  "description": "Add and change ToDo",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "bootstrap": "~3.3.4"
+  }
+}
