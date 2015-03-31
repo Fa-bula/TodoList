@@ -39,8 +39,7 @@ $(document).ready(function() {
     $(document).on('mousedown', 'button[class="close"]', function(event) {
 	socket.emit('deleteToDo', $(this).parent().attr('id'));
     });
-    
-    
+        
     $('#AllComp').change(function(event) {
 	if (void 0 === $('#AllComp').attr('checked')) {
 	    $('span[id*=ToDo-]').addClass('doneToDo');
@@ -75,10 +74,6 @@ $(document).ready(function() {
 	$(this).focus();
     });
 
-    $(document).on('focusout', 'span[id*=ToDo-]', function(event) {
-	socket.emit('toDoChanged', $(this).parent().attr('id'), $(this).html());
-    });
-    
     socket.on('toDoChanged', function(index, newContent) {
 	$('#' + index + ' span:first').html(newContent);
     });
@@ -97,7 +92,7 @@ $(document).ready(function() {
     $(document).on('focusout', 'span[id*=ToDo-]', function(event) {
 	$(this).attr('contenteditable', 'false');
 	$(this).prop('contenteditable', 'false');
-	localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
+	socket.emit('toDoChanged', $(this).parent().attr('id'), $(this).html());
     });
     
     $('#done').click( function(event) {
