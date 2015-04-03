@@ -5,99 +5,105 @@
 //# sourceMappingURL=jquery.min.map
 'use strict';
 /*global io*/
+/*global alert*/
+/*global console*/
 
 $(document).ready(function() {
+    if ('') {
+	alert('1');
+	console.log('1');
+    }
+    
     $('#NewToDo').focus();
     var socket = io();
-    function appendToDo(index, content) {
-	var NewToDo = $('<div class="ToDo">');
-	NewToDo.attr('id', index);
-	NewToDo.append('<input type="checkbox" id=check-' + index + '>');
-	NewToDo.append('<span class="ToDo-text" id=ToDo-' + index + '>' + content);
-	NewToDo.append('<button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>');
-	NewToDo.append('<hr>');
-	$('#TableOfToDo').append(NewToDo);    
+    
+    function prependToDo(index, content) {
+	var newToDo = $('<div class="ToDo">').attr('id', index);
+	var checkbox = $('<input type="checkbox">');
+	var span = $('<span class="ToDo-text">').text(content);
+	var button = $('<button>').addClass('close').attr('type', 'button').text('×');
+
+	newToDo.append(checkbox);
+	newToDo.append(span);
+	newToDo.append(button);
+	newToDo.append('<hr>');
+	
+	$('#TableOfToDo').prepend(newToDo);
     }
     
     socket.on('initiate', function(ToDos) {
-	for (var key in ToDos) {
-	    appendToDo(key, ToDos[key]);
+	var keys = Object.keys(ToDos).sort(function(a, b) {
+	    return +a - +b;
+	});
+	
+	for (var i = 0; i < keys.length; ++i) {
+	    prependToDo(keys[i], ToDos[keys[i]]);
 	}
     });
-
-    $('form').submit(function(event) {
-	$('#AllComp').removeAttr('checked');
-	var content = $('#NewToDo').val();
-	$('#NewToDo').val('');
-	socket.emit('newToDo', content);
-	event.preventDefault();
-    });
     
-    socket.on('appendToDo', function(index, content) {
-	appendToDo(index, content);
+    socket.on('prependToDo', function(index, content) {
+	prependToDo(index, content);
     });
     
     socket.on('deleteToDo', function(index) {
 	$('#' + index).remove();
     });
     
+    socket.on('toDoChanged', function(index, newContent) {
+	$('#' + index + ' span').text(newContent);
+    });
+    
+    socket.on('toggleToDo', function(index) {
+	var checkbox = $('#' + index + ' input');
+	checkbox.prop('checked', !checkbox.prop('checked'));
+	checkbox.next().toggleClass('doneToDo');
+    });
+
+    $('form').submit(function(event) {
+	$('#AllComp').prop('checked', false);
+	var content = $('#NewToDo').val();
+	$('#NewToDo').val('');
+	socket.emit('newToDo', content);
+	event.preventDefault();
+    });
+    
     $(document).on('mousedown', 'button[class="close"]', function(event) {
 	socket.emit('deleteToDo', $(this).parent().attr('id'));
     });
-        
+    
     $('#AllComp').change(function(event) {
-	if (void 0 === $('#AllComp').attr('checked')) {
-	    $('span[id*=ToDo-]').addClass('doneToDo');
-	    $('#AllComp').attr('checked', 'checked');
-	    $('input[id*=check-]').attr('checked', 'checked');
-	    $('input[id*=check-]').prop('checked', true);
-	} else {
-	    $('span[id*=ToDo-]').removeClass('doneToDo');
-	    $('#AllComp').removeAttr('checked');
-	    $('input[id*=check-]').prop('checked', false);
-	    $('input[id*=check-]').removeAttr('checked');
-	}
-	localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
+	var newValue = $(this).prop('checked');
+	$('div[class="ToDo"] input').prop('checked', newValue);
+	$('div[class="ToDo"] input').trigger('change');
     });
     
-    $(document).on('change', 'input[id*=check-]', function(event) {
-	var currentDiv = '#ToDo' + $(this).attr('id').slice(5);
-	if (void 0 === $(this).attr('checked')) {
-	    $(currentDiv).addClass('doneToDo');
-	    $(this).attr('checked', 'checked');
-	} else {
-	    $(currentDiv).removeClass('doneToDo');
-	    $(this).removeAttr('checked');
-	    $('#AllComp').removeAttr('checked');
+    $(document).on('change', 'div[class="ToDo"] input', function(event) {
+	var hasClass = $(this).next().hasClass('doneToDo');
+	if ($(this).prop('checked') ? !hasClass: hasClass) {
+	    $(this).next().toggleClass('doneToDo');
+	    socket.emit('toggleToDo', $(this).parent().attr('id'));
 	}
-	localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
-    });
-    
-    $(document).on('dblclick', 'span[id*=ToDo-]', function(event) {
-	$(this).attr('contenteditable', 'true');
-	$(this).prop('contenteditable', 'true');
-	$(this).focus();
     });
 
-    socket.on('toDoChanged', function(index, newContent) {
-	$('#' + index + ' span:first').html(newContent);
-    });
-    
-    $(document).on('keydown', 'span[id*=ToDo-]', function(event) {
+    $(document).on('keydown', 'div[class="ToDo"] span', function(event) {
 	if ( event.which === 13 ) {
 	    event.preventDefault();
 	    $('#NewToDo').focus();
 	}
     });
     
-    $(document).on('mousedown', 'span[id*=ToDo-]', function(event) {
+    $(document).on('dblclick', 'div[class="ToDo"] span', function(event) {
+	$(this).prop('contenteditable', 'true');
+	$(this).focus();
+    });
+
+    $(document).on('mousedown', 'div[class="ToDo"] span', function(event) {
 	event.preventDefault();
     });
     
-    $(document).on('focusout', 'span[id*=ToDo-]', function(event) {
-	$(this).attr('contenteditable', 'false');
-	$(this).prop('contenteditable', 'false');
-	socket.emit('toDoChanged', $(this).parent().attr('id'), $(this).html());
+    $(document).on('focusout', 'div[class="ToDo"] span', function(event) {
+	$(this).prop('contenteditable', false);
+	socket.emit('toDoChanged', $(this).parent().attr('id'), $(this).text());
     });
     
     $('#done').click( function(event) {
@@ -105,6 +111,5 @@ $(document).ready(function() {
 	$('#AllComp').prop('checked', 'false');
 	$('#AllComp').removeAttr('checked');
 	$('#NewToDo').focus();
-	localStorage.setItem('TableOfToDo', $('#TableOfToDo').html());
     });
 });

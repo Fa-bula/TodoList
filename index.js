@@ -12,8 +12,9 @@ app.get('/', function(req, res){
   res.sendfile('index.html');
 });
 
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
     console.log('a user connected');
+
 
     socket.emit('initiate', ToDos);
 
@@ -23,12 +24,12 @@ io.on('connection', function(socket){
     
     socket.on('newToDo', function(content) {
 	ToDos[index] = content;
-	// console.log(ToDos);
-	io.emit('appendToDo', ++index, content);
+	io.emit('prependToDo', index++, content);
     });
     
     socket.on('deleteToDo', function(index) {
-	delete ToDos.index;
+	console.log(index + 'deleted');
+	delete ToDos[index];
 	io.emit('deleteToDo', index);
     });
 
@@ -37,9 +38,13 @@ io.on('connection', function(socket){
 	console.log(index, newContent);
 	socket.broadcast.emit('toDoChanged', index, newContent);
     });
+    
+    socket.on('toggleToDo', function(index) {
+	socket.broadcast.emit('toggleToDo', index);
+    });
 });
 
 http.listen(app.get('port'), function() {
-    console.log('listening at localhost:' + app.get('port'));
+    console.log('listening at http://localhost:' + app.get('port'));
 });
 
