@@ -23,8 +23,9 @@ io.on('connection', function(socket) {
     });
     
     socket.on('newToDo', function(content) {
-	ToDos[index] = content;
-	io.emit('prependToDo', index++, content);
+	var toPrepend = {'isDone': false, 'content': content}
+	ToDos[index] = toPrepend;
+	io.emit('prependToDo', index++, toPrepend);
     });
     
     socket.on('deleteToDo', function(index) {
@@ -34,14 +35,19 @@ io.on('connection', function(socket) {
     });
 
     socket.on('toDoChanged', function(index, newContent) {
-	ToDos[index] = newContent;
+	ToDos[index].content = newContent;
 	console.log(index, newContent);
 	socket.broadcast.emit('toDoChanged', index, newContent);
     });
     
     socket.on('toggleToDo', function(index) {
+	ToDos[index].isDone = !ToDos[index].isDone;
 	socket.broadcast.emit('toggleToDo', index);
     });
+    
+    socket.on('deleteDone', function() {
+	io.emit('deleteDone');
+    })
 });
 
 http.listen(app.get('port'), function() {
