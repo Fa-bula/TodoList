@@ -1,4 +1,8 @@
 # TodoList
-Easy make and edit TODO list
+Возможности:
+* Добавление дел
+* Пометка дел выполненными
+* Удаление дел
+* Синхронизация списка дел во всех открытых экземплярах
 
 https://obscure-chamber-4689.herokuapp.com/
